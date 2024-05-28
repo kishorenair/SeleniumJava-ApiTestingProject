@@ -1,0 +1,35 @@
+import static io.restassured.RestAssured.given;
+
+import org.json.JSONObject;
+import org.testng.Assert;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Test;
+
+import io.restassured.RestAssured;
+import io.restassured.response.Response;
+
+public class apiTestingProject {
+	
+	private JSONObject jsonFormattedResponse;
+	@BeforeClass
+	public void initialSetUp()
+	{
+		RestAssured.baseURI = "https://api.tmsandbox.co.nz/v1/Categories/6327/Details.json?catalogue=false";
+		Response response = given().param("catalogue", "false").when().get("/v1/Categories/6327/Details.json");
+		
+		// Printing the formatted response
+		JSONObject jsonFormattedResponse = new JSONObject(response.getBody().asString());
+        System.out.println("Formatted Response: " + jsonFormattedResponse.toString(2)); // Adding indent with 2 spaces
+        		
+	}
+	
+	@Test
+	public void testNamefield()
+	{
+		String name = this.jsonFormattedResponse.getString("Name");
+        Assert.assertEquals(name, "Carbon credits", "Failure. Name field mismatch!");
+        System.out.println("Name field verified successfully.");
+	}
+
+}
